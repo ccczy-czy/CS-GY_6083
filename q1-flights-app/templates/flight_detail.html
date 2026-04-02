@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Detail</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #2d3748;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      display: inline-block;
+      font-size: .875rem;
+      color: #3182ce;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .header-card {
+      background: #3182ce;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      color: #fff;
+      margin-bottom: 1.25rem;
+    }
+
+    .flight-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: .25rem;
+    }
+
+    .flight-sub {
+      font-size: .95rem;
+      opacity: .85;
+    }
+
+    .route-line {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-top: .75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .info-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+      text-align: center;
+    }
+
+    .info-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .info-label {
+      font-size: .75rem;
+      color: #718096;
+      text-transform: uppercase;
+      margin-top: .35rem;
+    }
+
+    .color-total {
+      color: #2b6cb0;
+    }
+
+    .color-booked {
+      color: #c53030;
+    }
+
+    .color-available {
+      color: #276749;
+    }
+
+    .color-limited {
+      color: #c05621;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: .75rem;
+    }
+
+    .seat-map {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+      margin-bottom: 1.25rem;
+    }
+
+    .seat-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .seat {
+      width: 42px;
+      height: 42px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 700;
+      border: 2px solid transparent;
+    }
+
+    .seat-booked {
+      background: #fed7d7;
+      color: #c53030;
+      border-color: #fc8181;
+    }
+
+    .seat-free {
+      background: #c6f6d5;
+      color: #276749;
+      border-color: #68d391;
+    }
+
+    .seat-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: .75rem;
+      font-size: .8rem;
+      color: #718096;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      margin-right: .35rem;
+      vertical-align: middle;
+    }
+
+    .booking-section {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+
+    th {
+      background: #edf2f7;
+      padding: .6rem .85rem;
+      text-align: left;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #718096;
+    }
+
+    td {
+      padding: .6rem .85rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #2d3748;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .alert-error {
+      background: #fff5f5;
+      border: 1px solid #fc8181;
+      color: #c53030;
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .875rem;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <a href="javascript:history.back()" class="back-link">&larr; Back to results</a>
+
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    {% if detail %}
+    <div class="header-card">
+      <div class="flight-title">Flight {{ detail.flight_number }}</div>
+      <div class="flight-sub">{{ detail.airline_name }} &bull; {{ detail.plane_type }}</div>
+      <div class="route-line">
+        {{ detail.origin_code }}
+        <span>&#9992;</span>
+        {{ detail.dest_code }}
+      </div>
+      <div class="flight-sub" style="margin-top:.5rem;">
+        {{ detail.departure_date }} &bull; Departs {{ detail.departure_time }} GMT
+        &bull; Duration {{ detail.duration }}
+      </div>
+    </div>
+
+    {% set avail = detail.available_seats %}
+    {% set cap = detail.capacity %}
+    {% set booked = detail.booked_seats %}
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-value color-total">{{ cap }}</div>
+        <div class="info-label">Total seats</div>
+      </div>
+      <div class="info-card">
+        <div class="info-value color-booked">{{ booked }}</div>
+        <div class="info-label">Booked</div>
+      </div>
+      <div class="info-card">
+        {% if avail == 0 %}
+        {% set avail_class = "color-booked" %}
+        {% elif avail <= (cap // 5) %} {% set avail_class="color-limited" %} {% else %} {% set
+          avail_class="color-available" %} {% endif %} <div class="info-value {{ avail_class }}">{{ avail }}</div>
+      <div class="info-label">Available</div>
+    </div>
+  </div>
+
+  <div class="seat-map">
+    <div class="section-title">Seat Map</div>
+    <div class="seat-grid">
+      {% set booked_numbers = booked_seats | map(attribute="seat_number") | list %}
+      {% for seat_num in range(1, cap + 1) %}
+      {% if seat_num in booked_numbers %}
+      <div class="seat seat-booked" title="Seat {{ seat_num }} — Booked">
+        {{ seat_num }}
+      </div>
+      {% else %}
+      <div class="seat seat-free" title="Seat {{ seat_num }} — Available">
+        {{ seat_num }}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class="seat-legend">
+      <span>
+        <span class="legend-dot" style="background:#fed7d7; border:2px solid #fc8181;"></span>
+        Booked
+      </span>
+      <span>
+        <span class="legend-dot" style="background:#c6f6d5; border:2px solid #68d391;"></span>
+        Available
+      </span>
+    </div>
+  </div>
+
+  {% if booked_seats %}
+  <div class="booking-section">
+    <div class="section-title">Booked Passengers</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Seat #</th>
+          <th>Passenger</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in booked_seats %}
+        <tr>
+          <td>{{ b.seat_number }}</td>
+          <td>{{ b.passenger_name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% endif %} {# end if detail #}
+
+  </div>
+</body>
+
+</html>

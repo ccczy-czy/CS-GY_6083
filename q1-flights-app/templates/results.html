@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Results</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #2d3748;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+
+    .route-badge {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      background: #3182ce;
+      color: #fff;
+      border-radius: 8px;
+      padding: .5rem 1rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .date-range {
+      font-size: .875rem;
+      color: #718096;
+    }
+
+    .back-link {
+      font-size: .875rem;
+      color: #3182ce;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .alert-error {
+      background: #fff5f5;
+      border: 1px solid #fc8181;
+      color: #c53030;
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .875rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .alert-info {
+      background: #ebf8ff;
+      border: 1px solid #90cdf4;
+      color: #2b6cb0;
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .result-count {
+      font-size: .875rem;
+      color: #718096;
+      margin-bottom: .75rem;
+    }
+
+    .flight-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      transition: box-shadow .15s;
+    }
+
+    .flight-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+    }
+
+    .flight-main {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+
+    .flight-id {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1a202c;
+    }
+
+    .flight-airline {
+      font-size: .875rem;
+      color: #718096;
+    }
+
+    .flight-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-top: .25rem;
+    }
+
+    .meta-item {
+      font-size: .875rem;
+      color: #4a5568;
+    }
+
+    .meta-item span {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .seats-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .25rem;
+      text-align: center;
+    }
+
+    .seats-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .seats-label {
+      font-size: .7rem;
+      color: #718096;
+      text-transform: uppercase;
+    }
+
+    .seats-available {
+      color: #276749;
+    }
+
+    .seats-limited {
+      color: #c05621;
+    }
+
+    .seats-full {
+      color: #c53030;
+    }
+
+    .btn-details {
+      display: inline-block;
+      margin-top: .75rem;
+      padding: .45rem .9rem;
+      background: #3182ce;
+      color: #fff;
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .btn-details:hover {
+      background: #2b6cb0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <div class="route-badge">
+          {{ origin }} &rarr; {{ destination }}
+        </div>
+        <div class="date-range">{{ date_from }} &ndash; {{ date_to }}</div>
+      </div>
+      <a href="/" class="back-link">&larr; New search</a>
+    </div>
+
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    {% if not error %}
+    {% if flights %}
+    <p class="result-count">{{ flights|length }} flight{{ 's' if flights|length != 1 else '' }} found</p>
+
+    {% for f in flights %}
+    {# Determine seat badge colour based on availability #}
+    {% if f.available_seats == 0 %}
+    {% set seat_class = "seats-full" %}
+    {% elif f.available_seats <= (f.capacity // 5) %} {% set seat_class="seats-limited" %} {% else %} {% set
+      seat_class="seats-available" %} {% endif %} <div class="flight-card">
+      <div class="flight-main">
+        <div class="flight-id">{{ f.flight_number }}</div>
+        <div class="flight-airline">{{ f.airline_name }}</div>
+        <div class="flight-meta">
+          <div class="meta-item">Date: <span>{{ f.departure_date }}</span></div>
+          <div class="meta-item">Departure: <span>{{ f.departure_time }}</span> GMT</div>
+          <div class="meta-item">Duration: <span>{{ f.duration }}</span></div>
+          <div class="meta-item">Origin: <span>{{ f.origin_code }}</span></div>
+          <div class="meta-item">Dest: <span>{{ f.dest_code }}</span></div>
+        </div>
+        <a class="btn-details" href="/flights/{{ f.flight_number }}/{{ f.departure_date }}">
+          View seat availability &rarr;
+        </a>
+      </div>
+
+      <div class="seats-badge">
+        <div class="seats-number {{ seat_class }}">{{ f.available_seats }}</div>
+        <div class="seats-label">seats free</div>
+        <div class="seats-label">of {{ f.capacity }}</div>
+      </div>
+  </div>
+  {% endfor %}
+
+  {% else %}
+  <div class="alert-info">
+    No flights found for <strong>{{ origin }} &rarr; {{ destination }}</strong>
+    between <strong>{{ date_from }}</strong> and <strong>{{ date_to }}</strong>.
+    Please try a different route or date range.
+  </div>
+  {% endif %}
+  {% endif %}
+
+  </div>
+</body>
+
+</html>

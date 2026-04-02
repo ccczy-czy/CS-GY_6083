@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Search</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .10);
+      padding: 2.5rem 3rem;
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-header svg {
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .subtitle {
+      font-size: .875rem;
+      color: #718096;
+      margin-top: .25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: .875rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: .4rem;
+    }
+
+    select,
+    input[type="date"] {
+      width: 100%;
+      padding: .6rem .85rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: .95rem;
+      color: #2d3748;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+
+    select:focus,
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, .25);
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-search {
+      width: 100%;
+      padding: .75rem;
+      background: #3182ce;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: .5rem;
+      transition: background .15s;
+    }
+
+    .btn-search:hover {
+      background: #2b6cb0;
+    }
+
+    .alert-error {
+      background: #fff5f5;
+      border: 1px solid #fc8181;
+      color: #c53030;
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .875rem;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="card-header">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L9 8.2
+                 1.8 6.4C1.3 6.2 1 6.7 1.3 7.1L4 10 2 12l2 1 1 2 3-1
+                 2.9 2.9C10.7 17 11.2 17 11.3 16.5L12 12l7.8 1.8
+                 c.4.1.9-.2.8-.7z" />
+      </svg>
+      <div>
+        <h1>Flight Search</h1>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form action="/flights" method="GET">
+
+      <div class="form-group">
+        <label for="origin">Origin Airport</label>
+        <select id="origin" name="origin" required>
+          <option value="" disabled selected>Select origin airport…</option>
+          {% for ap in airports %}
+          <option value="{{ ap.airport_code }}">
+            {{ ap.airport_code }} — {{ ap.name }} ({{ ap.city }}, {{ ap.country }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Destination Airport</label>
+        <select id="destination" name="destination" required>
+          <option value="" disabled selected>Select destination airport…</option>
+          {% for ap in airports %}
+          <option value="{{ ap.airport_code }}">
+            {{ ap.airport_code }} — {{ ap.name }} ({{ ap.city }}, {{ ap.country }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date Range</label>
+        <div class="date-row">
+          <div>
+            <label for="date_from" style="font-weight:400; color:#718096;">From</label>
+            <input type="date" id="date_from" name="date_from" required />
+          </div>
+          <div>
+            <label for="date_to" style="font-weight:400; color:#718096;">To</label>
+            <input type="date" id="date_to" name="date_to" required />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-search">Search Flights</button>
+    </form>
+  </div>
+</body>
+
+</html>
