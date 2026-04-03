@@ -1,0 +1,10 @@
+Q4 Metadata Queries — (b) Columns configured to store timestamp / date values
+Run at: Fri Apr  3 00:57:38 EDT 2026
+------------------------------------------------------------
+  table_name   |  column_name   |       data_type        
+---------------+----------------+------------------------
+ booking       | departure_date | date
+ flight        | departure_date | date
+ flightservice | departure_time | time without time zone
+ flightservice | duration       | interval
+

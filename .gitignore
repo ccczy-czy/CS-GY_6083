@@ -49,6 +49,3 @@ pgdata/
 
 # Jupyter / IPython
 .ipynb_checkpoints/
-
-# Logs
-*.log

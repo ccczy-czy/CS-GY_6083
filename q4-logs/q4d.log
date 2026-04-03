@@ -1,0 +1,8 @@
+Q4 Metadata Queries — (d) Tables with a composite primary key
+Run at: Fri Apr  3 00:57:38 EDT 2026
+------------------------------------------------------------
+ table_name | pk_column_count 
+------------+-----------------
+ booking    |               3
+ flight     |               2
+

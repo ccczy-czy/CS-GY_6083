@@ -1,0 +1,6 @@
+Q4 Metadata Queries — (a) Tables with >= 2 outgoing FKs referencing distinct tables
+Run at: Fri Apr  3 00:57:37 EDT 2026
+------------------------------------------------------------
+ referencing_table | distinct_referenced_tables 
+-------------------+----------------------------
+

@@ -1,0 +1,9 @@
+Q4 Metadata Queries — (e) Attributes whose column name contains the substring 'name'
+Run at: Fri Apr  3 00:57:38 EDT 2026
+------------------------------------------------------------
+  table_name   |  column_name   
+---------------+----------------
+ airport       | name
+ flightservice | airline_name
+ passenger     | passenger_name
+
